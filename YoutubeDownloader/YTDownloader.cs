@@ -14,7 +14,6 @@ namespace YoutubeDownloader
         private string ExportVideoDirPath { get; set; }
         private string ExportAudioDirPath { get; set; }
         private ExportOptions ExportOptions { get; set; }
-        private bool CleanupVideoFile { get; set; }
         #endregion
 
         #region AudioEngineAPI
@@ -22,7 +21,6 @@ namespace YoutubeDownloader
         {
             add { audioEngine.ConversionCompleteEvent += value; }
             remove { audioEngine.ConversionCompleteEvent -= value; }
-
         }
 
         public event EventHandler<ConvertProgressEventArgs> ConvertProgressEvent
@@ -63,7 +61,6 @@ namespace YoutubeDownloader
             this.ExportAudioDirPath = builder.ExportAudioDirPath;
             this.ExportVideoDirPath = builder.ExportVideoDirPath;
             this.ExportOptions = builder.ExportOptions;
-            this.CleanupVideoFile = builder.CleanupVideoFile;
         }
 
         public void DownLoad(string ytLink, string fileName = null, VideoType videoType = VideoType.Mp4)
@@ -73,7 +70,7 @@ namespace YoutubeDownloader
             if (ExportOptions.HasFlag(ExportOptions.ExportAudio))
                 DownloadAudio(videoFilePath);
 
-            if (CleanupVideoFile)
+            if (ExportOptions.HasFlag(ExportOptions.ExportAudio) && !ExportOptions.HasFlag(ExportOptions.ExportVideo))
             {
                 File.Delete(videoFilePath);
             }
@@ -84,7 +81,7 @@ namespace YoutubeDownloader
             IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(ytLink);
 
             /*
-             * Select the first .mp4 video with highest BiRate
+             * Select the first video by type with highest AudioBitrate
              */
             VideoInfo video = videoInfos
                 .OrderByDescending(info => info.AudioBitrate)
@@ -109,8 +106,12 @@ namespace YoutubeDownloader
 
         private void DownloadAudio(string videoFilePath)
         {
+            string audioOutputPath = videoFilePath
+                                    .Replace(ExportVideoDirPath, ExportAudioDirPath)
+                                    .ReplaceLastOccurrence("mp4", "mp3");
+
             var inputFile = new MediaFile { Filename = videoFilePath };
-            var outputFile = new MediaFile { Filename = videoFilePath.ReplaceLastOccurrence("mp4", "mp3") };
+            var outputFile = new MediaFile { Filename = audioOutputPath };
 
             using (var engine = new Engine())
             {

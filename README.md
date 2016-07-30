@@ -27,9 +27,8 @@ var downloader = new YTDownloaderBuilder()
                 .SetExportAudioPath(exportAudioPath) // mandatory
                 .SetExportVideoPath(exportVideoPath) // mandatory
                 .SetExportOptions(ExportOptions.ExportAudio | ExportOptions.ExportVideo) // default ExportOptions.ExportAudio | ExportOptions.ExportVideo
-                .SetCleanupVideoFile(false) // default false
                 .Build();
 
-downloader.DownLoad("https://www.youtube.com/watch?v=fg5TJVkls9o");
+downloader.DownLoad("https://www.youtube.com/watch?v=12345");
 downloader.Dispose();
 ```
