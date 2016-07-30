@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace YoutubeDownloader
 {
-    public class Class1
+    [Flags]
+    public enum ExportOptions
     {
+        ExportVideo = 1,
+        ExportAudio = 2
     }
 }
