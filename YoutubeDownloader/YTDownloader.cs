@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using YoutubeExtractor;
 
 namespace YoutubeDownloader
@@ -61,6 +63,14 @@ namespace YoutubeDownloader
             this.ExportAudioDirPath = builder.ExportAudioDirPath;
             this.ExportVideoDirPath = builder.ExportVideoDirPath;
             this.ExportOptions = builder.ExportOptions;
+        }
+
+        public Task DownLoadAsync(string ytLink, string fileName = null, VideoType videoType = VideoType.Mp4)
+        {
+            return Task.Run(() =>
+            {
+                DownLoad(ytLink, fileName, videoType);
+            });
         }
 
         public void DownLoad(string ytLink, string fileName = null, VideoType videoType = VideoType.Mp4)
