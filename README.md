@@ -29,7 +29,7 @@ var downloader = new YTDownloaderBuilder()
                 .SetExportOptions(ExportOptions.ExportAudio | ExportOptions.ExportVideo) // default ExportOptions.ExportAudio | ExportOptions.ExportVideo
                 .Build();
 
-downloader.DownLoad("https://www.youtube.com/watch?v=12345");
+downloader.DownLoad("https://www.youtube.com/watch?v=12345"); // or DownLoadAsync
 downloader.Dispose();
 ```
 ##Subscribing to events:
