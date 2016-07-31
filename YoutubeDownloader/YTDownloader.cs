@@ -88,7 +88,7 @@ namespace YoutubeDownloader
 
         private string DownloadVideo(string ytLink, string fileName, VideoType videoType)
         {
-            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(ytLink);
+            IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(ytLink, false);
 
             /*
              * Select the first video by type with highest AudioBitrate
