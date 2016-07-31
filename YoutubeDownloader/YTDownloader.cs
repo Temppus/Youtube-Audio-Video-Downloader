@@ -26,29 +26,29 @@ namespace YoutubeDownloader
         private IList<LinkInfo> linksToProcess;
 
         #region AudioEngineAPI
-        public void AddConvertProgressAction(Action<ConvertProgressEventArgs> action, Guid guid)
+        public void AddConvertProgressAction(Guid guid, Action<ConvertProgressEventArgs> action)
         {
             engines[guid].ConvertProgressEvent += (sender, args) => { action.Invoke(args); };
         }
 
-        public void AddConversionCompleteAction(Action<ConversionCompleteEventArgs> action, Guid guid)
+        public void AddConversionCompleteAction(Guid guid, Action<ConversionCompleteEventArgs> action)
         {
             engines[guid].ConversionCompleteEvent += (sender, args) => { action.Invoke(args); };
         }
         #endregion
 
         #region VideoDownloaderAPI
-        public void AddDownloadProgressChangedAction(Action<ProgressEventArgs> action, Guid guid)
+        public void AddDownloadProgressChangedAction(Guid guid, Action<ProgressEventArgs> action)
         {
             videoDownloaders[guid].DownloadProgressChanged += (sender, args) => { action.Invoke(args); };
         }
 
-        public void AddDownloadStartedAction(Action<EventArgs> action, Guid guid)
+        public void AddDownloadStartedAction(Guid guid, Action<EventArgs> action)
         {
             videoDownloaders[guid].DownloadStarted += (sender, args) => { action.Invoke(args); };
         }
 
-        public void AddDownloadFinishedAction(Action<EventArgs> action, Guid guid)
+        public void AddDownloadFinishedAction(Guid guid, Action<EventArgs> action)
         {
             videoDownloaders[guid].DownloadFinished += (sender, args) => { action.Invoke(args); };
         }
