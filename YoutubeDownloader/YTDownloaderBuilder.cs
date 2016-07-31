@@ -9,33 +9,58 @@ namespace YoutubeDownloader
 {
     public class YTDownloaderBuilder
     {
-        public string ExportVideoDirPath { get; set; }
-        public string ExportAudioDirPath { get; set; }
-        public ExportOptions ExportOptions { get; set; }
-        public bool SkipVideosWhichExists { get; set; }
+        public string ExportVideoDirPath { get; private set; }
+        public string ExportAudioDirPath { get; private set; }
+        public ExportOptions ExportOptions { get; private set; }
+        public bool SkipVideosWhichExists { get; private set; }
+
+        private IList<LinkInfo> links;
 
         public YTDownloaderBuilder()
         {
+            links = new List<LinkInfo>();
             this.ExportOptions = ExportOptions.ExportVideo | ExportOptions.ExportAudio;
             this.ExportAudioDirPath = null;
             this.ExportVideoDirPath = null;
             this.SkipVideosWhichExists = false;
         }
 
-        public YTMultiDownloader BuildMulti(IList<LinkInfo> links)
+        public YTDownloader Build()
         {
             CheckDirPath(ExportAudioDirPath);
             CheckDirPath(ExportVideoDirPath);
 
-            return new YTMultiDownloader(this, links);
+            return new YTDownloader(this, links);
         }
 
-        public YTMultiDownloader BuildMulti(params string[] urls)
+        public YTDownloaderBuilder SetLinks(IList<LinkInfo> links)
         {
-            CheckDirPath(ExportAudioDirPath);
-            CheckDirPath(ExportVideoDirPath);
+            this.links.Clear();
 
-            return new YTMultiDownloader(this, urls);
+            foreach (var link in links)
+                this.links.Add(link);
+
+            return this;
+        }
+
+        public YTDownloaderBuilder SetLinks(params LinkInfo[] links)
+        {
+            this.links.Clear();
+
+            foreach (var link in links)
+                this.links.Add(link);
+
+            return this;
+        }
+
+        public YTDownloaderBuilder SetLinks(params string[] urls)
+        {
+            this.links.Clear();
+
+            foreach (var url in urls)
+                this.links.Add(new LinkInfo(url));
+
+            return this;
         }
 
         public YTDownloaderBuilder SetExportOptions(ExportOptions opt)

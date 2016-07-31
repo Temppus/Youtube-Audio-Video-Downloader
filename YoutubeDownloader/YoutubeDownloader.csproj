@@ -69,7 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YTDownloaderBuilder.cs" />
     <Compile Include="LinkInfo.cs" />
-    <Compile Include="YTMultiDownloader.cs" />
+    <Compile Include="YTDownloader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

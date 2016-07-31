@@ -10,7 +10,7 @@ using YoutubeExtractor;
 
 namespace YoutubeDownloader
 {
-    public class YTMultiDownloader
+    public class YTDownloader
     {
         #region Settings
         private string ExportVideoDirPath { get; set; }
@@ -54,7 +54,7 @@ namespace YoutubeDownloader
         }
         #endregion
 
-        public YTMultiDownloader(YTDownloaderBuilder builder, IList<LinkInfo> links)
+        public YTDownloader(YTDownloaderBuilder builder, IList<LinkInfo> links)
         {
             Init(builder);
 
@@ -66,7 +66,7 @@ namespace YoutubeDownloader
             }
         }
 
-        public YTMultiDownloader(YTDownloaderBuilder builder, string [] urls)
+        public YTDownloader(YTDownloaderBuilder builder, string [] urls)
         {
             Init(builder);
 
