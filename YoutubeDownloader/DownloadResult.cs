@@ -8,6 +8,7 @@ namespace YoutubeDownloader
 {
     public class DownloadResult
     {
+        public bool DownloadSkipped { get; set; }
         public string VideoSavedFilePath { get; set; }
         public string AudioSavedFilePath { get; set; }
         public string FileBaseName { get; set; }

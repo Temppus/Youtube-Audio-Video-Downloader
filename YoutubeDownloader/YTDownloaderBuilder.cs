@@ -12,12 +12,14 @@ namespace YoutubeDownloader
         public string ExportVideoDirPath { get; set; }
         public string ExportAudioDirPath { get; set; }
         public ExportOptions ExportOptions { get; set; }
+        public bool SkipVideosWhichExists { get; set; }
 
         public YTDownloaderBuilder()
         {
             this.ExportOptions = ExportOptions.ExportVideo | ExportOptions.ExportAudio;
             this.ExportAudioDirPath = null;
             this.ExportVideoDirPath = null;
+            this.SkipVideosWhichExists = false;
         }
 
         public YTDownloader Build()
@@ -59,6 +61,12 @@ namespace YoutubeDownloader
         public YTDownloaderBuilder SetExportVideoPath(string path)
         {
             this.ExportVideoDirPath = path;
+            return this;
+        }
+
+        public YTDownloaderBuilder SetSkipDownloadIfFilesExists(bool skipDownloadIfVideosExists)
+        {
+            this.SkipVideosWhichExists = skipDownloadIfVideosExists;
             return this;
         }
 
