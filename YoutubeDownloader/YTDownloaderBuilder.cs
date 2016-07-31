@@ -22,14 +22,6 @@ namespace YoutubeDownloader
             this.SkipVideosWhichExists = false;
         }
 
-        public YTDownloader Build()
-        {
-            CheckDirPath(ExportAudioDirPath);
-            CheckDirPath(ExportVideoDirPath);
-
-            return new YTDownloader(this);
-        }
-
         public YTMultiDownloader BuildMulti(IList<LinkInfo> links)
         {
             CheckDirPath(ExportAudioDirPath);
