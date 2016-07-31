@@ -94,12 +94,12 @@ namespace YoutubeDownloader
             this.SkipVideosWhichExists = builder.SkipVideosWhichExists;
         }
 
-        public DownloadResult[] DownloadMulti()
+        public DownloadResult[] DownloadLinks()
         {
             return ProcessDownloads().Result;
         }
 
-        public async Task<DownloadResult[]> DownloadMultiAsync()
+        public async Task<DownloadResult[]> DownloadLinksAsync()
         {
             return await ProcessDownloads();
         }
