@@ -26,12 +26,12 @@ namespace YoutubeDownloader
         private IList<LinkInfo> linksToProcess;
 
         #region AudioEngineAPI
-        public void AddConvertProgressAction(Guid guid, Action<ConvertProgressEventArgs> action)
+        public void AddAudioConvertProgressAction(Guid guid, Action<ConvertProgressEventArgs> action)
         {
             engines[guid].ConvertProgressEvent += (sender, args) => { action.Invoke(args); };
         }
 
-        public void AddConversionCompleteAction(Guid guid, Action<ConversionCompleteEventArgs> action)
+        public void AddAudioConversionCompleteAction(Guid guid, Action<ConversionCompleteEventArgs> action)
         {
             engines[guid].ConversionCompleteEvent += (sender, args) => { action.Invoke(args); };
         }
