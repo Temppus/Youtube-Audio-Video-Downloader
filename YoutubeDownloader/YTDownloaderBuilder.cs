@@ -28,6 +28,22 @@ namespace YoutubeDownloader
             return new YTDownloader(this);
         }
 
+        public YTMultiDownloader BuildMulti(IList<LinkInfo> links)
+        {
+            CheckDirPath(ExportAudioDirPath);
+            CheckDirPath(ExportVideoDirPath);
+
+            return new YTMultiDownloader(this, links);
+        }
+
+        public YTMultiDownloader BuildMulti(params string[] urls)
+        {
+            CheckDirPath(ExportAudioDirPath);
+            CheckDirPath(ExportVideoDirPath);
+
+            return new YTMultiDownloader(this, urls);
+        }
+
         public YTDownloaderBuilder SetExportOptions(ExportOptions opt)
         {
             this.ExportOptions = opt;
