@@ -25,10 +25,34 @@ namespace YoutubeDownloader
         private IList<Task<DownloadResult>> tasks;
         private IList<LinkInfo> linksToProcess;
 
+        #region AudioEngineAPI
+        public void AddConvertProgressAction(Action<ConvertProgressEventArgs> action, Guid guid)
+        {
+            engines[guid].ConvertProgressEvent += (sender, args) => { action.Invoke(args); };
+        }
+
+        public void AddConversionCompleteAction(Action<ConversionCompleteEventArgs> action, Guid guid)
+        {
+            engines[guid].ConversionCompleteEvent += (sender, args) => { action.Invoke(args); };
+        }
+        #endregion
+
+        #region VideoDownloaderAPI
         public void AddDownloadProgressChangedAction(Action<ProgressEventArgs> action, Guid guid)
         {
             videoDownloaders[guid].DownloadProgressChanged += (sender, args) => { action.Invoke(args); };
         }
+
+        public void AddDownloadStartedAction(Action<EventArgs> action, Guid guid)
+        {
+            videoDownloaders[guid].DownloadStarted += (sender, args) => { action.Invoke(args); };
+        }
+
+        public void AddDownloadFinishedAction(Action<EventArgs> action, Guid guid)
+        {
+            videoDownloaders[guid].DownloadFinished += (sender, args) => { action.Invoke(args); };
+        }
+        #endregion
 
         public YTMultiDownloader(YTDownloaderBuilder builder, IList<LinkInfo> links)
         {
