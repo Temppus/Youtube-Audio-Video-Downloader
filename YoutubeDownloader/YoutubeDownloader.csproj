@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioConvertingEventArgs.cs" />
     <Compile Include="DownloadResult.cs" />
     <Compile Include="ExportOptions.cs" />
     <Compile Include="StringExtensions.cs" />

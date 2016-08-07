@@ -19,21 +19,24 @@ namespace YoutubeDownloader
         private bool SkipVideosWhichExists { get; set; }
         #endregion
 
-        private IDictionary<Guid, Engine> engines;
-        private IDictionary<Guid, VideoDownloader> videoDownloaders;
+        private IDictionary<Guid, Engine> engines = new Dictionary<Guid, Engine>();
+        private IDictionary<Guid, VideoDownloader> videoDownloaders = new Dictionary<Guid, VideoDownloader>();
 
-        private IList<Task<DownloadResult>> tasks;
-        private IList<LinkInfo> linksToProcess;
+        private IList<Task<DownloadResult>> tasks = new List<Task<DownloadResult>>();
+        private IList<LinkInfo> linksToProcess = new List<LinkInfo>();
+
+        private Dictionary<Guid, Action<AudioConvertingEventArgs>> beforeConvertingActions = new Dictionary<Guid, Action<AudioConvertingEventArgs>>();
+        private Dictionary<Guid, Action<AudioConvertingEventArgs>> afterConvertingActions = new Dictionary<Guid, Action<AudioConvertingEventArgs>>();
 
         #region AudioEngineAPI
-        public void AddAudioConvertProgressAction(Guid guid, Action<ConvertProgressEventArgs> action)
+        public void AddAudioConvertingStartedAction(Guid guid, Action<AudioConvertingEventArgs> action)
         {
-            engines[guid].ConvertProgressEvent += (sender, args) => { action.Invoke(args); };
+            beforeConvertingActions.Add(guid, action);
         }
 
-        public void AddAudioConversionCompleteAction(Guid guid, Action<ConversionCompleteEventArgs> action)
+        public void AddAudioConvertingEndedAction(Guid guid, Action<AudioConvertingEventArgs> action)
         {
-            engines[guid].ConversionCompleteEvent += (sender, args) => { action.Invoke(args); };
+            afterConvertingActions.Add(guid, action);
         }
         #endregion
 
@@ -56,7 +59,7 @@ namespace YoutubeDownloader
 
         public YTDownloader(YTDownloaderBuilder builder, IList<LinkInfo> links)
         {
-            Init(builder);
+            InitBuilder(builder);
 
             foreach (var linkInfo in links)
             {
@@ -68,7 +71,7 @@ namespace YoutubeDownloader
 
         public YTDownloader(YTDownloaderBuilder builder, string [] urls)
         {
-            Init(builder);
+            InitBuilder(builder);
 
             foreach (var url in urls)
             {
@@ -80,14 +83,8 @@ namespace YoutubeDownloader
             }
         }
 
-        private void Init(YTDownloaderBuilder builder)
+        private void InitBuilder(YTDownloaderBuilder builder)
         {
-            engines = new Dictionary<Guid, Engine>();
-            videoDownloaders = new Dictionary<Guid, VideoDownloader>();
-
-            tasks = new List<Task<DownloadResult>>();
-            linksToProcess = new List<LinkInfo>();
-
             this.ExportAudioDirPath = builder.ExportAudioDirPath;
             this.ExportVideoDirPath = builder.ExportVideoDirPath;
             this.ExportOptions = builder.ExportOptions;
@@ -128,7 +125,7 @@ namespace YoutubeDownloader
                         File.Delete(videoFilePath);
                     }
 
-                    return new DownloadResult() { VideoSavedFilePath = videoFilePath, GUID = linkInfo.GUID, AudioSavedFilePath = TransFormToAudioPath(videoFilePath, videoInfo.VideoExtension), FileBaseName = videoName, DownloadSkipped = false };
+                    return new DownloadResult() { VideoSavedFilePath = videoFilePath, GUID = linkInfo.GUID, AudioSavedFilePath = TransformToAudioPath(videoFilePath, videoInfo.VideoExtension), FileBaseName = videoName, DownloadSkipped = false };
                 });
 
                 tasks.Add(downloadTask);
@@ -169,7 +166,9 @@ namespace YoutubeDownloader
 
         private void DownloadAudio(LinkInfo linkInfo, string videoFilePath, string videoExtension)
         {
-            string audioOutputPath = TransFormToAudioPath(videoFilePath, videoExtension);
+            string audioOutputPath = TransformToAudioPath(videoFilePath, videoExtension);
+
+            beforeConvertingActions[linkInfo.GUID].Invoke(new AudioConvertingEventArgs() { GUID = linkInfo.GUID,  AudioSavedFilePath = audioOutputPath});
 
             var inputFile = new MediaFile { Filename = videoFilePath };
             var outputFile = new MediaFile { Filename = audioOutputPath };
@@ -177,10 +176,13 @@ namespace YoutubeDownloader
             var engine = engines[linkInfo.GUID];
 
             engine.Convert(inputFile, outputFile);
+
+            afterConvertingActions[linkInfo.GUID].Invoke(new AudioConvertingEventArgs() { GUID = linkInfo.GUID, AudioSavedFilePath = audioOutputPath });
+
             engine.Dispose();
         }
 
-        private string TransFormToAudioPath(string videoFilePath, string videoExtension)
+        private string TransformToAudioPath(string videoFilePath, string videoExtension)
         {
             string audioOutputPath = videoFilePath
                                     .Replace(ExportVideoDirPath, ExportAudioDirPath)
