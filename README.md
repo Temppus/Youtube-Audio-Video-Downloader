@@ -53,7 +53,7 @@ var downloader = new YTDownloaderBuilder()
 Task<DownloadResult[]> results = downloader.DownloadLinksAsync(); // process download
 ```
 ##Subscribing to events:
-YTDownloader is exposing all event API used YoutubeExtractor and MediaToolkit.
+YTDownloader is exposing all event API used YoutubeExtractor, MediaToolkit library has known bug so we are using custom one.
 
 Example
 ```c#
@@ -64,9 +64,15 @@ downloader.AddDownloadProgressChangedAction(link1.GUID, (progressArgs) =>
     Console.WriteLine("Download for link : " + link1.URL + " " + progressArgs.ProgressPercentage + "%");
 });
 
-// TODO ASAP
-downloader.AddAudioConvertProgressAction(
-downloader.AddAudioConversionCompleteAction(
+downloader.AddAudioConvertingStartedAction(link1.GUID, (convertArgs) =>
+{
+    Console.WriteLine("Converting audio to path : " + convertArgs.AudioSavedFilePath);
+});
+
+downloader.AddAudioConvertingEndedAction(link1.GUID, (convertArgs) =>
+{
+    Console.WriteLine("Converting audio done !");
+});
 ```
 ## Licensing
 This project is licensed under MIT license, but use 2 libraries:
