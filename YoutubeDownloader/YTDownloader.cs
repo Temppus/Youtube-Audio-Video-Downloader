@@ -168,7 +168,10 @@ namespace YoutubeDownloader
         {
             string audioOutputPath = TransformToAudioPath(videoFilePath, videoExtension);
 
-            beforeConvertingActions[linkInfo.GUID].Invoke(new AudioConvertingEventArgs() { GUID = linkInfo.GUID,  AudioSavedFilePath = audioOutputPath});
+            Action<AudioConvertingEventArgs> beforeAction;
+
+            if (beforeConvertingActions.TryGetValue(linkInfo.GUID, out beforeAction))
+                beforeConvertingActions[linkInfo.GUID].Invoke(new AudioConvertingEventArgs() { GUID = linkInfo.GUID,  AudioSavedFilePath = audioOutputPath});
 
             var inputFile = new MediaFile { Filename = videoFilePath };
             var outputFile = new MediaFile { Filename = audioOutputPath };
@@ -177,7 +180,10 @@ namespace YoutubeDownloader
 
             engine.Convert(inputFile, outputFile);
 
-            afterConvertingActions[linkInfo.GUID].Invoke(new AudioConvertingEventArgs() { GUID = linkInfo.GUID, AudioSavedFilePath = audioOutputPath });
+            Action<AudioConvertingEventArgs> afterAction;
+
+            if (afterConvertingActions.TryGetValue(linkInfo.GUID, out afterAction))
+                afterConvertingActions[linkInfo.GUID].Invoke(new AudioConvertingEventArgs() { GUID = linkInfo.GUID, AudioSavedFilePath = audioOutputPath });
 
             engine.Dispose();
         }
