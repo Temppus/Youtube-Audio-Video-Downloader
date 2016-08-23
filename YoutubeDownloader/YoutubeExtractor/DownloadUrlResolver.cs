@@ -169,6 +169,14 @@ namespace YoutubeExtractor
             return true;
         }
 
+        public static string TryNormalizeYoutubeUrl(string url)
+        {
+            string s;
+            if (TryNormalizeYoutubeUrl(url, out s))
+                return s;
+            else return url;
+        }
+
         private static IEnumerable<ExtractionInfo> ExtractDownloadUrls(JObject json)
         {
             string[] splitByUrls = GetStreamMap(json).Split(',');
