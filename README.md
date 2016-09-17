@@ -50,7 +50,7 @@ var downloader = new YTDownloaderBuilder()
                 .SetLinks(link1, link2) // check other overloads
                 .Build();
 
-Task<DownloadResult[]> results = downloader.DownloadLinksAsync(); // process download
+Task<DownloadResult[]> results = downloader.DownloadLinksAsync(CancellationToken.None); // process download
 ```
 ##Subscribing to events:
 YTDownloader is exposing all event API used YoutubeExtractor, MediaToolkit library has known bug so we are using custom one.
