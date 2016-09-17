@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExtractor;
 
@@ -93,18 +94,20 @@ namespace YoutubeDownloader
 
         public DownloadResult[] DownloadLinks()
         {
-            return ProcessDownloads().Result;
+            return ProcessDownloads(CancellationToken.None).Result;
         }
 
-        public async Task<DownloadResult[]> DownloadLinksAsync()
+        public async Task<DownloadResult[]> DownloadLinksAsync(CancellationToken token)
         {
-            return await ProcessDownloads();
+            return await ProcessDownloads(token);
         }
 
-        private async Task<DownloadResult[]> ProcessDownloads()
+        private async Task<DownloadResult[]> ProcessDownloads(CancellationToken token)
         {
             foreach (var linkInfo in linksToProcess)
             {
+                videoDownloaders[linkInfo.GUID].DownloadProgressChanged += (sender, args) => { token.ThrowIfCancellationRequested(); };
+
                 Task<DownloadResult> downloadTask = Task.Run(() =>
                 {
                     string videoName;
@@ -126,7 +129,7 @@ namespace YoutubeDownloader
                     }
 
                     return new DownloadResult() { VideoSavedFilePath = videoFilePath, GUID = linkInfo.GUID, AudioSavedFilePath = TransformToAudioPath(videoFilePath, videoInfo.VideoExtension), FileBaseName = videoName, DownloadSkipped = false };
-                });
+                }, token);
 
                 tasks.Add(downloadTask);
             }

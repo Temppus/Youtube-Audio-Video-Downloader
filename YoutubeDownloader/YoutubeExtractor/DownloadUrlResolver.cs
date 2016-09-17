@@ -225,7 +225,7 @@ namespace YoutubeExtractor
             // bugfix: adaptive_fmts is missing in some videos, use url_encoded_fmt_stream_map instead
             if (streamMap == null)
             {
-              streamMap = json["args"]["url_encoded_fmt_stream_map"];
+                streamMap = json["args"]["url_encoded_fmt_stream_map"];
             }
 
             return streamMap.ToString();
@@ -328,8 +328,7 @@ namespace YoutubeExtractor
         private static void ThrowYoutubeParseException(Exception innerException, string videoUrl)
         {
             throw new YoutubeParseException("Could not parse the Youtube page for URL " + videoUrl + "\n" +
-                                            "This may be due to a change of the Youtube page structure.\n" +
-                                            "Please report this bug at www.github.com/flagbug/YoutubeExtractor/issues", innerException);
+                                            "This may be due to a change of the Youtube page structure or video was removed.\n", innerException);
         }
 
         private class ExtractionInfo
